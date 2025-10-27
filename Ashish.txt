@@ -1,0 +1,59 @@
+src/components:
+	1.Footer.js
+	2.Header.js
+	3.Main.js
+	4.Home.js
+	5.About.js
+	6.CourseDetail.js
+@main.js
+imports:
+	import Header from './Header';
+	import Home from './Home';
+	import Footer from './footer';
+
+@home.js
+sections:
+	1.Latest Course sections
+	2.Popular Course sections 
+	3.Popular Teachers sections
+	4.Student Testimonials sections
+	
+@footer.js
+Texts
+
+@index.js
+imports:
+	import 'bootstrap/dist/css/bootstrap.min.css';
+ 	import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+
+Note: Remove ...min.css, ...min.js from index.html ----> import these to index.js
+
+React Router DOM:
+	npm package, it will make our application as a single page application.(only load the main/required component/content not the whole page.)
+	a href > Link to:
+		(only loading the required content not whole page using React Router DOM.)	
+		1.About us (.../) ---> .../about (content{About.js}) 
+		2.Home (.../about) ---> .../ (content{Home.js})
+		3.Learn Online (.../about) ---> .../ (content{Home.js})
+
+Dynamic Pages: 
+	Page content will be loaded from the database.
+	4.Course title (.../) ---> .../detail/id (content{CourseDetails.js})
+	5.logo##.png (.../) ---> .../detail/id (content{CourseDetails.js})
+	
+	
+	id in .../id:(pass dynamic id into url)
+		to get dynamic content from db.
+	
+	import{useParams} from "react-router-dom"; (hook->for getting the parameter of the url)
+	h1>Course Detail {course_id}</h1> (in url .../id put any number and get dynamic id number on page.)
+
+CourseDetail Page:
+	1.Course info section
+	2.Course video section
+	3.Related course section
+
+User Login and Register Layout:
+	
+		
