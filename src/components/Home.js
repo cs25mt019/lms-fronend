@@ -1,10 +1,13 @@
 import {Link} from "react-router-dom";
-
+import { useEffect } from "react";
 function Home() {
+  useEffect(()=>{
+    document.title="SpringBoard"
+  })
   return (
     <div className="container mt-4">
       {/* Latest Courses Section */}
-      <h3 className="pb-1 mb-4">Latest Courses <a href="#" className="float-end">See All</a></h3>
+      <h3 className="pb-1 mb-4">Latest Courses <Link to="all-courses" className="float-end">See All</Link></h3>
       <div className="row mb-4">
         <div className="col-md-3">
           <div className="card">
@@ -46,13 +49,19 @@ function Home() {
       {/* End Latest Courses Section */}
 
     {/* Popular Courses Section */}
-    <h3 className="pb-1 mb-4 mt-5">Popular Courses <a href="#" className="float-end">See All</a></h3>
+    <h3 className="pb-1 mb-4 mt-5">Popular Courses <Link to="popular-courses" className="float-end">See All</Link></h3>
     <div className="row mb-4">
         <div className="col-md-3">
           <div className="card">
   <a href="#"><img src="logo512.png" className="card-img-top" alt="..."/></a>
   <div className="card-body">
     <h5 className="card-title"><a href="#">Course title</a></h5>
+   <div className="card-footer">
+                <div className="title">
+                  <span className="">Rating : 4.5/5</span>
+                  <span className="float-end">View : 787</span>
+                  </div>
+                </div>
   </div>
 </div>
         </div>
@@ -62,6 +71,12 @@ function Home() {
   <a href="#"><img src="logo512.png" className="card-img-top" alt="..."/></a>
   <div className="card-body">
     <h5 className="card-title"><a href="#">Course title</a></h5>
+   <div className="card-footer">
+                <div className="title">
+                  <span className="">Rating : 4.5/5</span>
+                  <span className="float-end">View : 787</span>
+                  </div>
+                </div>
   </div>
 </div>
         </div>
@@ -71,6 +86,12 @@ function Home() {
   <a href="#"><img src="logo512.png" className="card-img-top" alt="..."/></a>
   <div className="card-body">
     <h5 className="card-title"><a href="#">Course title</a></h5>
+   <div className="card-footer">
+                <div className="title">
+                  <span className="">Rating : 4.5/5</span>
+                  <span className="float-end">View : 787</span>
+                  </div>
+                </div>
   </div>
 </div>
         </div>
@@ -88,7 +109,7 @@ function Home() {
       {/* End Popular Courses Section */}
 
     {/* Popular Teachers Section */}
-    <h3 className="pb-1 mb-4 mt-5">Popular Teachers <a href="#" className="float-end">See All</a></h3>
+    <h3 className="pb-1 mb-4 mt-5">Popular Teachers <Link to="popular-teachers" className="float-end">See All</Link></h3>
     <div className="row mb-4">
         <div className="col-md-3">
           <div className="card">
