@@ -1,5 +1,14 @@
 import { Link } from "react-router-dom";
+import { useEffect,useState } from "react";
+import axios from 'axios'
+const baseUrl="http://127.0.0.1:8000/api"
 function PopularTeachers() {
+  const [teacher,setTeacher]=useState(null);
+  useEffect(()=>{
+    axios.get(baseUrl+'/teacher/').then((response)=>{
+      console.log(response.data)
+    })
+  })
   return (
     <div className="container mt-4">
       <h3 className="pb-1 mb-4">Popular Courses</h3>
@@ -67,7 +76,7 @@ function PopularTeachers() {
             <a
               className="page-link"
               href="#"
-              tabindex="-1"
+              tabIndex="-1"
               aria-disabled="true"
             >
               Previous

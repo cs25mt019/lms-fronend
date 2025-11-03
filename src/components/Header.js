@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-
+const teacherLoginStatus=localStorage.getItem('teacherLoginStatus')
+   
 function Header() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-warning py-3 fs-5">
@@ -18,11 +19,14 @@ function Header() {
            Teacher
           </a>
           <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-             <Link className="nav-link" to="/teacher-login">Teacher Login</Link>
+            {teacherLoginStatus!='true' &&
+            <>
+            <Link className="nav-link" to="/teacher-login">Teacher Login</Link>
             <Link className="nav-link" to="/teacher-register">Teacher Register</Link>
+            </>
+          } 
             <Link className="nav-link" to="/teacher-dashboard">DashBoard</Link>
-            <li><hr className="dropdown-divider"/></li>
-            <li><a className="dropdown-item" href="#">logout</a></li>
+          <li><Link className="nav-link dropdown-item" to="/teacher-logout">logout</Link></li>
           </ul>
         </li>
 

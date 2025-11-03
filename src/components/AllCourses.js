@@ -1,61 +1,38 @@
 import { Link } from "react-router-dom";
+import { useState,useEffect } from "react";
+import axios from "axios";
+const baseURL="http://127.0.0.1:8000/api";
 function AllCourses() {
+  const[courses,setCourses]=useState([]);
+  useEffect(()=>{
+      try{  
+          axios.get(baseURL+"/course/").then((response)=>{
+              setCourses(response.data);
+          });}
+      catch(error){
+          console.log(error);
+      } },[]) 
+
   return (
     <div className="container mt-4">
       <h3 className="pb-1 mb-4">All Courses</h3>
       <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card">
-            <Link to="/detail/1">
-              <img src="logo512.png" className="card-img-top" alt="..." />
-            </Link>
-            <div className="card-body">
-              <h5 className="card-title">
-                <Link to="/detail/1">Course title</Link>
-              </h5>
+        
+         {courses.map((course,index)=>(
+          <div className="col-md-3 col-sm-6 mb-4 col-lg-3">
+            <div className="card mb-4" key={index}>
+              <img  src={course.featured_image} className="card-img-top" alt={course.title} />
+              <div className="card-body">
+                <h5 className="card-title">{course.title}</h5>  
+                <Link to={'/detail/'+course.id} className="btn btn-primary">View Details</Link>
+              </div>
             </div>
-          </div>
-        </div>
+            </div>
+         ))}
 
-        <div className="col-md-3">
-          <div className="card">
-            <a href="#">
-              <img src="logo512.png" className="card-img-top" alt="..." />
-            </a>
-            <div className="card-body">
-              <h5 className="card-title">
-                <a href="#">Course title</a>
-              </h5>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-3">
-          <div className="card">
-            <a href="#">
-              <img src="logo512.png" className="card-img-top" alt="..." />
-            </a>
-            <div className="card-body">
-              <h5 className="card-title">
-                <a href="#">Course title</a>
-              </h5>
-            </div>
-          </div>
-        </div>
-
-        <div className="col-md-3">
-          <div className="card">
-            <a href="#">
-              <img src="logo512.png" className="card-img-top" alt="..." />
-            </a>
-            <div className="card-body">
-              <h5 className="card-title">
-                <a href="#">Course title</a>
-              </h5>
-            </div>
-          </div>
-        </div>
+        
       </div>
+        
       {/*pagination*/}
       <nav aria-label="...">
         <ul className="pagination justify-content-center">
