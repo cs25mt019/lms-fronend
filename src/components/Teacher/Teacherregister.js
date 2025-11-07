@@ -6,55 +6,69 @@ const baseUrl = "http://127.0.0.1:8000/api/teacher/";
 
 function Teacherregister() {
     const [teacherData, setTeacherData] = useState({
-        "full_name": "",
-        "email": "",
-        "password": "",
-        "qualification": "",
-        "mobile_no": "",
-        "skills": "",
-        "status": ""
-    });
+    full_name: "",
+    email: "",
+    password: "",
+    qualification: "",
+    mobile_no: "",
+    skills: "",
+    profile_image: null,
+    status: ""
+});
 
-    // Change element value
-    const handleChange = (event) => {
-        setTeacherData({
-            ...teacherData,
-            [event.target.name]: event.target.value
-        });
+// handle text fields
+const handleChange = (event) => {
+    setTeacherData({
+        ...teacherData,
+        [event.target.name]: event.target.value
+    });
+};
+
+// handle file input
+const handleFileChange = (event) => {
+    setTeacherData({
+        ...teacherData,
+        profile_image: event.target.files[0]
+    });
+};
+
+// Submit form
+const submitForm = (event) => {
+    event.preventDefault();
+    
+    const teacherFormData = new FormData();
+    teacherFormData.append("full_name", teacherData.full_name);
+    teacherFormData.append("email", teacherData.email);
+    teacherFormData.append("password", teacherData.password);
+    teacherFormData.append("qualification", teacherData.qualification);
+    teacherFormData.append("mobile_no", teacherData.mobile_no);
+    teacherFormData.append("skills", teacherData.skills);
+    
+    if (teacherData.profile_image) {
+        teacherFormData.append("profile_image", teacherData.profile_image);
     }
 
-    // Submit form
-    const submitForm = (event) => {
-        event.preventDefault();
-        
-        const teacherFormData = new FormData();
-        teacherFormData.append("full_name", teacherData.full_name);
-        teacherFormData.append("email", teacherData.email);
-        teacherFormData.append("password", teacherData.password);
-        teacherFormData.append("qualification", teacherData.qualification);
-        teacherFormData.append("mobile_no", teacherData.mobile_no);
-        teacherFormData.append("skills", teacherData.skills);
+    axios.post(baseUrl, teacherFormData, {
+        headers: { "Content-Type": "multipart/form-data" }
+    })
+    .then((response) => {
+        setTeacherData({
+            full_name: "",
+            email: "",
+            password: "",
+            qualification: "",
+            mobile_no: "",
+            skills: "",
+            profile_image: null,
+            status: "success"
+        });
+    })
+    .catch((error) => {
+        console.log(error);
+        setTeacherData({ ...teacherData, status: "error" });
+    });
+};
 
-        axios.post(baseUrl, teacherFormData)
-            .then((response) => {
-                setTeacherData({
-                    "full_name": "",
-                    "email": "",
-                    "password": "",
-                    "qualification": "",
-                    "mobile_no": "",
-                    "skills": "",
-                    "status": "success"
-                });
-            })
-            .catch((error) => {
-                console.log(error);
-                setTeacherData({
-                    ...teacherData,
-                    'status': "error"
-                });
-            });
-    };
     const teacherLoginStatus=localStorage.getItem('teacherLoginStatus')
     if(teacherLoginStatus=='true'){
         window.Location.href="/teacher-dashboard"
@@ -80,6 +94,10 @@ function Teacherregister() {
                                 <div className="mb-3">
                                     <label htmlFor="email" className="form-label">Email</label>
                                     <input value={teacherData.email} onChange={handleChange} type="email" name="email" className="form-control" id="email" required />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Profile Picture</label>
+                                    <input onChange={handleFileChange} type="file" name="profile_image" className="form-control" />
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="password" className="form-label">Password</label>

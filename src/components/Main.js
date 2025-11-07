@@ -14,6 +14,7 @@ import Recommendedcourses from './User/Recommendedcourses';
 import Favoritecourses from './User/Favoritecourses';
 import Profilesetting from './User/Profilesetting';
 import Changepassword from './User/Changepassword';
+import StudentLogout from './User/StudentLogout';
 
 //teacher
 import Teacherdashboard from './Teacher/Teacherdashboard';
@@ -29,6 +30,9 @@ import AddChapter from './Teacher/AddChapter';
 import EditChapter from './Teacher/EditChapter';
 import CourseChapters from './Teacher/CourseChapters';
 import Editcourse from './Teacher/EditCourse';
+import TeacherSkillCourses from './TeacherSkillCourses';
+import EnrolledStudents from './Teacher/EnrolledStudents';
+import StudentCourseDetail from './User/StudentCourseDetail';
 
 import AllCourses from './AllCourses';
 import Popularcourses from './PopularCourses';
@@ -45,6 +49,7 @@ function Main() {
         <Route path="/about" element={<About />} />
         <Route path="/detail/:course_id" element={<CourseDetail />} />
         <Route path="/user-login" element={<Login />} />
+        <Route path="/user-logout" element={<StudentLogout />} />
         <Route path="/user-register" element={<Register />} />
         <Route path="/user-dashboard" element={<DashBoard/>}/>
         <Route path="/my-courses" element={<Mycourses/>}/>
@@ -71,7 +76,9 @@ function Main() {
              <Route path="/popular-teachers" element={<PopularTeachers/>}/>
               <Route path='/category/:category_slug' element={<CategoryCourses/>}/>
               <Route path="/edit-course/:course_id" element={<Editcourse/>}/>
-
+            <Route path="/teacher-skill-courses/:skill_name/:teacher_id" element={<TeacherSkillCourses/>}/>
+            <Route path="/enrolled-students/:course_id" element={<EnrolledStudents/>}/><Route path="/enrolled-students/:course_id" element={<EnrolledStudents />} />
+            <Route path="/student-course-detail/:course_id"element={<StudentCourseDetail />}/>
 
         </Switch>
       <Footer />

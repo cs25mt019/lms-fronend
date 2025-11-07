@@ -56,8 +56,8 @@ function Addcourse() {
 
         const courseFormData = new FormData();
         
-        // FIX: Use "Teacher" with capital T to match serializer
-        courseFormData.append("Teacher", teacherId);
+        console.log("this is my Category id",courseData.category)
+        courseFormData.append("teacher_id", teacherId);
         courseFormData.append("category", courseData.category);
         courseFormData.append("title", courseData.title);
         courseFormData.append("description", courseData.description);
@@ -68,9 +68,9 @@ function Addcourse() {
         }
 
         // Debug: log FormData
-        for (let [key, value] of courseFormData.entries()) {
-            console.log(key, value);
-        }
+        // for (let [key, value] of courseFormData.entries()) {
+        //     console.log(key, value);
+        // }
 
         try {
             axios.post("http://127.0.0.1:8000/api/course/", courseFormData, {
@@ -78,6 +78,7 @@ function Addcourse() {
                     'content-type': 'multipart/form-data'
                 }
             }).then((response) => {
+                //console.log(courseData.category)
                 setSuccess('Course added successfully!');
                 setCourseData({
                     "category": '',

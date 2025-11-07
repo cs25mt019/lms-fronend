@@ -1,55 +1,78 @@
 import { Link } from "react-router-dom";
-const teacherLoginStatus=localStorage.getItem('teacherLoginStatus')
-   
+
 function Header() {
+  const teacherLoginStatus = localStorage.getItem("teacherLoginStatus");
+  const studentLoginStatus = localStorage.getItem("studentLoginStatus");
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-warning py-3 fs-5">
-  <div className="container">
-    <Link className="navbar-brand" to="/">SpringBoard</Link>
-    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span className="navbar-toggler-icon"></span>
-    </button>
-    <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div className="navbar-nav ms-auto">
-        <Link className="nav-link active" aria-current="page" to="/">Home</Link>
-        <Link className="nav-link" to="/all-courses">Courses</Link>
-  
-          <li className="nav-item dropdown">
-          <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-           Teacher
-          </a>
-          <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-            {teacherLoginStatus!='true' &&
-            <>
-            <Link className="nav-link" to="/teacher-login">Teacher Login</Link>
-            <Link className="nav-link" to="/teacher-register">Teacher Register</Link>
-            </>
-          } 
-            <Link className="nav-link" to="/teacher-dashboard">DashBoard</Link>
-          <li><Link className="nav-link dropdown-item" to="/teacher-logout">logout</Link></li>
-          </ul>
-        </li>
+    <nav className="navbar navbar-expand-lg bg-warning shadow-sm py-3 fs-5 text-dark">
+      <div className="container">
+        <Link className="navbar-brand fw-bold fs-1" to="/">SpringBoard</Link>
 
+        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+          data-bs-target="#navMenu">
+          <span className="navbar-toggler-icon"></span>
+        </button>
 
-        <li className="nav-item dropdown">
-          <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            User
-          </a>
-          <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-             <Link className="nav-link" to="/user-login">User Login</Link>
-            <Link className="nav-link" to="/user-register">User Register</Link>
-            <Link className="nav-link" to="/user-dashboard">DashBoard</Link>
-            <li><hr className="dropdown-divider"/></li>
-            <li><a className="dropdown-item" href="#">logout</a></li>
+        <div className="collapse navbar-collapse" id="navMenu">
+          <ul className="navbar-nav ms-auto">
+
+            <li className="nav-item">
+              <Link className="nav-link fs-4" to="/">Home</Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link fs-4" to="/all-courses">Courses</Link>
+            </li>
+
+            {/* Teacher Menu */}
+            <li className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle fs-4" data-bs-toggle="dropdown">
+                Teacher
+              </a>
+              <ul className="dropdown-menu dropdown-menu-end">
+
+                {teacherLoginStatus !== "true" ? (
+                  <>
+                    <li><Link className="dropdown-item" to="/teacher-login">Login</Link></li>
+                    <li><Link className="dropdown-item" to="/teacher-register">Register</Link></li>
+                  </>
+                ) : (
+                  <>
+                    <li><Link className="dropdown-item" to="/teacher-dashboard">Dashboard</Link></li>
+                    <li><Link className="dropdown-item" to="/teacher-logout">Logout</Link></li>
+                  </>
+                )}
+
+              </ul>
+            </li>
+
+            {/* User Menu */}
+            <li className="nav-item dropdown">
+              <a className="nav-link dropdown-toggle fs-4" data-bs-toggle="dropdown">
+                Student
+              </a>
+              <ul className="dropdown-menu dropdown-menu-end">
+
+                {studentLoginStatus !== "true" ? (
+                  <>
+                    <li><Link className="dropdown-item" to="/user-login">Login</Link></li>
+                    <li><Link className="dropdown-item" to="/user-register">Register</Link></li>
+                  </>
+                ) : (
+                  <>
+                    <li><Link className="dropdown-item" to="/user-dashboard">Dashboard</Link></li>
+                    <li><Link className="dropdown-item" to="/user-logout">Logout</Link></li>
+                  </>
+                )}
+
+              </ul>
+            </li>
+
           </ul>
-        </li>
-       
-        
-      
+        </div>
       </div>
-    </div>
-  </div>
-</nav>
+    </nav>
   );
 }
 

@@ -1,89 +1,255 @@
-import{useParams} from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+
+const baseURL = "http://localhost:8000/api/course/";
+const siteURL = "http://localhost:8000/";
 
 function CourseDetail() {
-    let {course_id} = useParams();
+  const { course_id } = useParams();
+  const [courseData, setCourseData] = useState(null);
+  const [chapters, setChapters] = useState([]);
+  const [relatedCourses, setRelatedCourses] = useState([]);
+  const [techList, setTechList] = useState([]);
+  const [enrolled, setEnrolled] = useState(false);
+
+  // Rating States
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+  const [avgRating, setAvgRating] = useState(0);
+  const [reviews, setReviews] = useState([]);
+
+  const student = JSON.parse(localStorage.getItem("student"));
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const res = await axios.get(`${baseURL}${course_id}/`);
+       // console.log(res.data);
+        setCourseData(res.data);
+        setChapters(res.data.course_chapters || []);
+        setTechList(res.data.tech_list || []);
+
+        const related =
+          typeof res.data.related_videos === "string"
+            ? JSON.parse(res.data.related_videos)
+            : res.data.related_videos;
+        setRelatedCourses(related || []);
+
+        if (student) {
+          const isEnrolled = await axios.get(
+            `http://localhost:8000/api/check-enrollment/?student=${student.id}&course=${course_id}`
+          );
+          if (isEnrolled.data.enrolled) setEnrolled(true);
+        }
+
+        const avg = await axios.get(
+          `http://localhost:8000/api/course-rating/${course_id}/`
+        );
+        setAvgRating(avg.data.average_rating || 0);
+
+        const reviewData = await axios.get(
+          `http://localhost:8000/api/course-reviews/${course_id}/`
+        );
+        setReviews(reviewData.data);
+
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadData();
+  }, [course_id]);
+
+  if (!courseData) return <div>Loading...</div>;
+
+  const enrollCourse = async () => {
+    if (!student) {
+      Swal.fire("Login Required", "Please login first!", "warning").then(() => {
+        window.location.href = "/user-login";
+      });
+      return;
+    }
+
+    const check = await axios.get(
+      `http://localhost:8000/api/check-enrollment/?student=${student.id}&course=${course_id}`
+    );
+
+    if (check.data.enrolled) {
+      Swal.fire("Already Enrolled!", "", "info");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("student", student.id);
+    formData.append("course", course_id);
+
+    const res = await axios.post(
+      `http://localhost:8000/api/student-enroll-course/`,
+      formData
+    );
+
+    if (res.status === 201) {
+      Swal.fire("Enrolled Successfully!", "", "success");
+      setEnrolled(true);
+    }
+  };
+
+  // Submit or Update Rating
+  const submitRating = async () => {
+    if (!student) {
+      Swal.fire("Login first", "", "warning");
+      return;
+    }
+    if (!enrolled) {
+      Swal.fire("You must enroll first", "", "info");
+      return;
+    }
+
+    await axios.post("http://localhost:8000/api/rate-course/", {
+      student: student.id,
+      course: course_id,
+      rating,
+      review,
+    });
+
+    Swal.fire("Review Submitted!", "", "success");
+
+    const avg = await axios.get(`http://localhost:8000/api/course-rating/${course_id}/`);
+    setAvgRating(avg.data.average_rating || 0);
+
+    const reviewData = await axios.get(
+      `http://localhost:8000/api/course-reviews/${course_id}/`
+    );
+    setReviews(reviewData.data);
+  };
+
+  // Delete Review
+  const deleteReview = async (id) => {
+    await axios.delete(`http://localhost:8000/api/delete-review/${id}/`);
+    Swal.fire("Review Deleted", "", "success");
+    setReviews(reviews.filter((x) => x.id !== id));
+  };
+
   return (
     <div className="container mt-3">
-        <div className="row">
-            <div className="col-4">
-                <img src="/logo512.png" className="img-thumbnail" alt="..."/>
-            </div>
-
-            {/* Course Info Section */}
-            <div className="col-8">
-                <h3>Course Title</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-  Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-  <p className="fw-bold">Course By: <Link to="/teacher-detail/1">Teacher 1</Link></p>
-  <p className="fw-bold">Duration: 3 Hours 30 Minutes</p>
-  <p className="fw-bold">Total Enrolled: 456 Students</p>
-  <p className="fw-bold">Rating: 4.5/5</p>
-            </div>
-            {/* End Course Info Section */}
-
+      {/* ---------- Course Header ---------- */}
+      <div className="row">
+        <div className="col-4">
+          <img src={courseData.featured_image} className="img-thumbnail" alt="course" />
         </div>
-        {/* Course Videos Section */}
-        <div className="card mt-4">
-            <h5 className="card-header">
-                Course Videos
-            </h5>
+        <div className="col-8">
+          <h3>{courseData.title}</h3>
+          <p>{courseData.description}</p>
+
+          <p><b>Instructor:</b>{" "}
+            <Link to={`/teacher-detail/${courseData.Teacher?.id}`}>
+              {courseData.Teacher?.full_name}
+            </Link>
+          </p>
+
+          <p><b>Technologies:</b>{" "}
+            {techList.map((t, i) => (
+              <Link key={i} to={`/category/${t.trim()}`} className="badge bg-secondary me-2">
+                {t.trim()}
+              </Link>
+            ))}
+          </p>
+
+          <p><b>Duration:</b> {courseData.duration}</p>
+          <p><b>Enrolled:</b> {courseData.total_enrolled_students}</p>
+
+          <p><b>Rating:</b> ⭐ {avgRating.toFixed(1)}</p>
+
+          {enrolled ? (
+            <button className="btn btn-secondary" disabled>Enrolled</button>
+          ) : (
+            <button onClick={enrollCourse} className="btn btn-success">
+              Enroll Now
+            </button>
+          )}
+
+          {/* Rating UI */}
+          <div className="mt-3 border p-3 rounded">
+            <h6>Rate this Course:</h6>
+            <div style={{ fontSize: "24px" }}>
+              {[1,2,3,4,5].map((star) => (
+                <span
+                  key={star}
+                  style={{ cursor: "pointer", color: star <= rating ? "gold" : "gray" }}
+                  onClick={() => setRating(star)}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+            <textarea
+              className="form-control mt-2 mb-2"
+              placeholder="Write a review"
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            ></textarea>
+            <button className="btn btn-warning" onClick={submitRating}>
+              Submit Review
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ---------- Chapters ---------- */}
+      <div className="card mt-4">
+        <h5 className="card-header">Course Content</h5>
         <ul className="list-group list-group-flush">
-            <li className="list-group-item">Introduction <button className="btn btn-sm btn-danger float-end " data-bs-toggle="modal" data-bs-target="#videoModal1"><i className="bi bi-play-circle-fill"></i></button>
-            <div className="modal fade" id="videoModal1" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div className="modal-dialog modal-xl">
-    <div className="modal-content">
-      <div className="modal-header">
-        <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div className="modal-body">
-        <div className="ratio ratio-16x9">
-          <iframe src="https://youtu.be/VEQ-XJWiQMM?si=ue0YlcZt0eRHYKt8" title="YouTube video" allowFullScreen></iframe>
-        </div>
-      </div>
-      <div className="modal-footer">
-        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-            
+          {chapters.map((chapter) => (
+            <li className="list-group-item" key={chapter.id}>
+              {chapter.title}
             </li>
-            <li className="list-group-item">Introduction <button className="btn btn-sm btn-danger float-end"><i className="bi bi-play-circle-fill"></i></button></li>
-            <li className="list-group-item">Introduction <button className="btn btn-sm btn-danger float-end"><i className="bi bi-play-circle-fill"></i></button></li>
-            <li className="list-group-item">Introduction <button className="btn btn-sm btn-danger float-end"><i className="bi bi-play-circle-fill"></i></button></li>
-            <li className="list-group-item">Introduction <button className="btn btn-sm btn-danger float-end"><i className="bi bi-play-circle-fill"></i></button></li>
-            <li className="list-group-item">Introduction <button className="btn btn-sm btn-danger float-end"><i className="bi bi-play-circle-fill"></i></button></li>
+          ))}
         </ul>
-        </div>
-        {/* End Course Videos Section */}
+      </div>
 
-        {/* Related Courses Section */}
-        <h3 className="pb-1 mb-4 mt-5">Related Courses</h3>
-      <div className="row mb-4">
-        <div className="col-md-3">
-          <div className="card">
-  <Link to="/detail/1"><img src="/logo512.png" className="card-img-top" alt="..."/></Link>
-  <div className="card-body">
-    <h5 className="card-title"><Link to="/detail/1">Course title</Link></h5>
-  </div>
-</div>
-        </div>
+      {/* ---------- Reviews ---------- */}
+      <div className="mt-4">
+        <h4>Student Reviews</h4>
+        {reviews.length === 0 && <p>No reviews yet.</p>}
+        {reviews.map((r) => (
+          <div key={r.id} className="border p-2 rounded mb-2">
+            <b>{r.student_name}</b> — {"⭐".repeat(r.rating)} ({r.rating}/5)
+            <p>{r.review}</p>
 
-        <div className="col-md-3">
-          <div className="card">
-  <a href="#"><img src="/logo512.png" className="card-img-top" alt="..."/></a>
-  <div className="card-body">
-    <h5 className="card-title"><a href="#">Course title</a></h5>
-  </div>
-</div>
-        </div>
-        </div>
-        {/* End Related Courses Section */}
+            {student && student.id === r.student && (
+              <button className="btn btn-sm btn-danger" onClick={() => deleteReview(r.id)}>
+                Delete
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
 
-
+      {/* ---------- Related Courses ---------- */}
+      <h4 className="mt-4">Related Courses</h4>
+      <div className="row">
+        {relatedCourses.length > 0 ? relatedCourses.map((course) => (
+          <div key={course.pk} className="col-md-3 mb-3">
+            <div className="card">
+              <Link to={`/detail/${course.pk}`}>
+                <img
+                  src={`${siteURL}media/${course.fields.featured_image}`}
+                  className="card-img-top"
+                  alt={course.fields.title}
+                />
+              </Link>
+              <div className="card-body">
+                <h5>{course.fields.title}</h5>
+                <Link to={`/detail/${course.pk}`} className="btn btn-primary">
+                  View Course
+                </Link>
+              </div>
+            </div>
+          </div>
+        )) : <p>No related courses found.</p>}
+      </div>
     </div>
   );
 }
