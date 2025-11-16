@@ -1,38 +1,811 @@
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+/* App.css */
+body, html, #root, .App {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden!important;
+}
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .App {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+/* Global Search Bar Polishing */
+.global-search .form-control:focus,
+.global-search input:focus,
+.global-search button:focus,
+.global-search .btn:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: #ddd !important;
+}
+
+/* Smooth border radius for the bar */
+/* .global-search .form-control,
+.global-search .input-group-text,
+.global-search .btn {
+  /* border-radius: 8px !important; 
+} */
+
+/* Hover + active button cleanup */
+.global-search .btn:hover,
+.global-search .btn:active {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* Fix input border merge */
+.global-search .input-group-text {
+  border-right: none !important;
+}
+.global-search .form-control {
+  border-left: none !important;
+}
+
+/* ---------- Hero Container ---------- */
+.hero {
+  background: linear-gradient(90deg, #fffdf4 0%, #fffdf7 100%);
+}
+
+.hero-container {
+  position: relative;
+  background: linear-gradient(120deg, #ffe082 0%, #ffca28 50%, #ffd740 100%);
+  min-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
+  transition: background 0.6s ease;
+}
+
+/* ---------- Typography ---------- */
+.hero-title {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  color: #212121;
+  line-height: 1.2;
+}
+
+.hero-title span {
+  background-color: #000;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtext {
+  color: #4e4e4e;
+  font-size: 1.1rem;
+  max-width: 90%;
+}
+
+/* ---------- Buttons ---------- */
+.hero-buttons .btn {
+  transition: all 0.3s ease-in-out;
+  font-weight: 600;
+}
+
+.hero-buttons .btn-dark:hover {
+  background-color: #000 !important;
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.hero-buttons .btn-outline-dark:hover {
+  background-color: #000;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ---------- Hero Image ---------- */
+.hero-img-wrap {
+  position: relative;
+  animation: float 4s ease-in-out infinite;
+}
+
+.hero-img {
+  max-width: 90%;
+  border-radius: 20px;
+  box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- Floating Animation ---------- */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* ---------- Decorative Elements ---------- */
+.hero-container::before,
+.hero-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.25;
+  z-index: 0;
+}
+
+.hero-container::before {
+  width: 200px;
+  height: 200px;
+  background: white;
+  top: -50px;
+  left: -80px;
+}
+
+.hero-container::after {
+  width: 280px;
+  height: 280px;
+  background: #fffde7;
+  bottom: -80px;
+  right: -100px;
+}
+.highlight {
+  background: #ffd54f;
+  padding: 0 8px;
+  border-radius: 8px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .hero-subtext {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .hero-buttons {
+    text-align: center;
+  }
+
+  .hero-title {
+    text-align: center;
+  }
+
+  .hero-img {
+    margin-top: 40px;
+    max-width: 100%;
+  }
+}
+
+.smart-section {
+  background: #fffdf7;
+  border-radius: 40px;
+  overflow: hidden;
+  margin-top: 60px;
+}
+
+.smart-title {
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  font-weight: 700;
+  color: #212121;
+  line-height: 1.3;
+}
+
+.highlight-bg {
+  background: #ffca28;
+  padding: 6px 16px;
+  border-radius: 20px;
+  color: #000;
+  font-weight: 700;
+}
+
+.smart-description {
+  font-size: 1.1rem;
+  color: #555;
+  line-height: 1.6;
+  max-width: 90%;
+}
+
+.smart-list {
+  list-style: none!important;
+  padding-left: 0;
+}
+
+.smart-list li {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.smart-list li::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #ffb300;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.smart-image {
+  max-width: 90%;
+  transition: transform 0.4s ease;
+}
+
+.smart-image:hover {
+  transform: scale(1.03);
+}
+
+@media (max-width: 768px) {
+  .smart-description {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .smart-title {
+    text-align: center;
+  }
+
+  .smart-list {
+    text-align: center;
+  }
+
+  .smart-image {
+    max-width: 100%;
+  }
+}
+/* Section styling */
+.home-section {
+  padding: 3rem 0;
+}
+.home-section.alt-bg {
+  background: #fafafa;
+}
+.section-title {
+  font-weight: 700;
+  color: #222;
+  font-size: 1.6rem;
+}
+.see-all {
+  font-weight: 500;
+  text-decoration: none;
+  color: #0066ff;
+}
+.see-all:hover {
+  text-decoration: underline;
+}
+
+/* Course card */
+.course-card {
+  border: none;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.course-card img {
+  height: 180px;
+  width: 100%;
+  object-fit: cover;
+}
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+}
+.course-card .card-body {
+  padding: 1rem;
+}
+.course-card .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+}
+.course-card .instructor {
+  color: #555;
+  font-size: 0.9rem;
+}
+.course-card .course-meta {
+  color: #777;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+}
+
+/* Teacher card */
+.teacher-card {
+  border: none;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.teacher-card img {
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+.teacher-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+}
+.teacher-card .badge {
+  font-size: 0.75rem;
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+}
+
+/* Dark section theme */
+.popular-dark {
+  background-color: #1f1f1f;
+  color: #fff;
+  padding: 4rem 0;
+  border-radius: 40px 40px 0 0;
+}
+
+/* Section heading style */
+.section-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+.section-heading span {
+  color: #f5b942; /* gold tone */
+  border: 2px solid #f5b942;
+  border-radius: 12px;
+  padding: 0.2rem 0.8rem;
+  margin-left: 0.5rem;
+}
+
+/* Course card styling */
+.popular-course-card {
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #2b2b2b;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.popular-course-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+.popular-course-card img {
+  height: 180px;
+  width: 100%;
+  object-fit: cover;
+  border-bottom: 1px solid #333;
+}
+.popular-course-card .card-body {
+  padding: 1rem 1rem 1.5rem 1rem;
+}
+.popular-course-card .card-title {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+}
+.popular-course-card .instructor {
+  color: #cfcfcf;
+  font-size: 0.9rem;
+}
+.course-info span {
+  color: #f1f1f1;
+}
+/* ======= POPULAR COURSES (Modern Look) ======= */
+.popular-modern {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+  color: #fff;
+  padding: 5rem 0;
+  border-radius: 40px 40px 0 0;
+}
+
+/* Heading Styling */
+.section-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+.section-heading span {
+  color: #f5b942;
+  border: 2px solid #f5b942;
+  border-radius: 10px;
+  padding: 0.25rem 0.8rem;
+  margin-left: 0.5rem;
+}
+.section-subtext {
+  color: #ccc;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Course Card */
+.course-modern-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+}
+.course-modern-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(245, 185, 66, 0.3);
+}
+
+/* Image Wrapper */
+.course-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+.course-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+.course-modern-card:hover .course-img {
+  transform: scale(1.05);
+}
+
+/* Card Content */
+.course-body {
+  padding: 1rem 1.2rem 1.4rem;
+  color: #222;
+}
+.course-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 0.6rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.6rem;
+}
+.rating {
+  color: #f5b942;
+  font-weight: 500;
+}
+.review-count {
+  color: #999;
+}
+.duration {
+  color: #777;
+}
+.instructor {
+  color: #444;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 768px) {
+  .course-modern-card {
+    margin-bottom: 1.5rem;
+  }
+}
+/* =================== POPULAR COURSES (Carousel Edition) =================== */
+.popular-modern {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0f0f0f 100%);
+  color: #fff;
+  padding: 3rem 0;
+  border-radius: 40px 40px 0 0;
+  position: relative;
+}
+
+/* Section Header */
+.section-heading {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+.section-heading span {
+  color: #f5b942;
+  border: 2px solid #f5b942;
+  border-radius: 10px;
+  padding: 0.25rem 0.8rem;
+  margin-left: 0.5rem;
+}
+.section-subtext {
+  color: #ccc;
+  font-size: 1rem;
+  margin-top: 0.3rem;
+}
+
+/* See All Button */
+.see-all-btn {
+  color: #f5b942;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+.see-all-btn:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* Course Card */
+.course-modern-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(255, 255, 255, 0.05);
+}
+.course-modern-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(245, 185, 66, 0.3);
+}
+
+/* Image */
+.course-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+.course-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+.course-modern-card:hover .course-img {
+  transform: scale(1.05);
+}
+
+/* Content */
+.course-body {
+  padding: 1rem 1.2rem 1.4rem;
+  color: #222;
+}
+.course-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 0.6rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.6rem;
+}
+.rating {
+  color: #f5b942;
+  font-weight: 500;
+}
+.review-count {
+  color: #999;
+}
+.duration {
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.instructor {
+  color: #444;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Slick Carousel Tweaks */
+.slick-slide {
+  padding: 0 10px;
+}
+.slick-prev:before,
+.slick-next:before {
+  color: #f5b942;
+  font-size: 25px;
+}
+.slick-dots li button:before {
+  color: #f5b942;
+}
+/* =================== LATEST COURSES =================== */
+.latest-modern {
+  background-color: #fafafa;
+  padding: 5rem 0;
+}
+
+/* Section Heading */
+.section-heading.text-dark {
+  color: #111;
+}
+.section-heading span {
+  color: #f5b942;
+  border: 2px solid #f5b942;
+  border-radius: 10px;
+  padding: 0.25rem 0.8rem;
+  margin-left: 0.5rem;
+}
+.section-subtext {
+  font-size: 1rem;
+}
+
+/* See All Button (Dark Theme) */
+.see-all-btn-dark {
+  color: #f5b942;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.see-all-btn-dark:hover {
+  color: #111;
+  text-decoration: underline;
+}
+
+/* Latest Course Cards */
+.course-latest-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+.course-latest-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(245, 185, 66, 0.3);
+}
+
+/* Image Wrapper */
+.course-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+.course-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+.course-latest-card:hover .course-img {
+  transform: scale(1.05);
+}
+
+/* Course Content */
+.course-body {
+  padding: 1rem 1.2rem 1.4rem;
+}
+.course-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 0.6rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.course-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #555;
+}
+.rating {
+  color: #f5b942;
+}
+.duration {
+  color: #888;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .course-latest-card {
+    margin-bottom: 1.5rem;
+  }
+}
+/* =================== TESTIMONIALS =================== */
+.testimonials-modern {
+  background: linear-gradient(180deg, #fffef9 0%, #fffaf3 100%);
+  padding: 5rem 0;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.testimonials-modern .section-heading {
+  color: #111;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.testimonials-modern .section-heading span {
+  color: #f5b942;
+  border: 2px solid #f5b942;
+  border-radius: 10px;
+  padding: 0.25rem 0.8rem;
+  margin-left: 0.5rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.section-subtext {
+  color: #555;
+  font-size: 1rem;
+}
+
+/* Testimonial Card */
+.testimonial-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(245, 185, 66, 0.25);
+}
+
+/* Quote Icon */
+.quote-icon {
+  color: #f5b942;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Text */
+.testimonial-text {
+  color: #444;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  min-height: 100px;
+}
+
+/* Footer (Student info) */
+.testimonial-footer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 0.5rem;
 }
 
-.App-link {
-  color: #61dafb;
+.testimonial-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f5b942;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.student-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111;
+}
+
+/* Slick Carousel */
+.slick-dots li button:before {
+  color: #f5b942;
+  opacity: 0.5;
+}
+.slick-dots li.slick-active button:before {
+  opacity: 1;
+  color: #f5b942;
+}
+.page-content {
+  flex: 1; /* This pushes footer to bottom */
+  padding-bottom: 20px; 
 }

@@ -1,164 +1,179 @@
-import { Link } from "react-router-dom";
-import Teachersidebar from "./Teachersidebar";
-import { Routes as Switch, Route } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
+import Teachersidebar from "./Teachersidebar";
+import axios from "axios";
 
-const baseUrl = "http://127.0.0.1:8000/api";
+const baseUrl = "http://127.0.0.1:8000/api/";
 
 function AddChapter() {
-    const [chapterData, setChapterData] = useState({
-        "title": '',
-        "description": '',
-        "video": "",
-        "remarks": ''
-    });
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+  const { course_id } = useParams();
 
-    const { course_id } = useParams();
+  const [chapterData, setChapterData] = useState({
+    title: "",
+    description: "",
+    video: null,
+    remarks: "",
+  });
 
-    const handleChange = (event) => {
-        setChapterData({
-            ...chapterData,
-            [event.target.name]: event.target.value
-        });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  // -----------------------------------------------
+  // Redirect if teacher not logged in
+  // -----------------------------------------------
+  useEffect(() => {
+    const teacher = JSON.parse(localStorage.getItem("teacher"));
+    const accessToken = localStorage.getItem("access");
+
+    if (!teacher || !teacher.id || !accessToken) {
+      alert("Please login as a teacher!");
+      window.location.href = "/teacher-login";
+    }
+  }, []);
+
+  // -----------------------------------------------
+  // Handle form changes
+  // -----------------------------------------------
+  const handleChange = (e) => {
+    setChapterData({ ...chapterData, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setChapterData({ ...chapterData, video: e.target.files[0] });
+  };
+
+  // -----------------------------------------------
+  // Submit form
+  // -----------------------------------------------
+  const submitForm = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+    setSuccess("");
+
+    const formData = new FormData();
+    formData.append("course", Number(course_id));
+    formData.append("title", chapterData.title);
+    formData.append("description", chapterData.description);
+    formData.append("remarks", chapterData.remarks);
+
+    if (chapterData.video instanceof File) {
+      formData.append("video", chapterData.video);
     }
 
-    const handleFileChange = (event) => {
-        setChapterData({
-            ...chapterData,
-            [event.target.name]: event.target.files[0]
-        });
+    try {
+      await axios.post(`${baseUrl}chapter/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("access")}`,
+        },
+      });
+
+      setSuccess("Chapter added successfully!");
+
+      // Reset form
+      setChapterData({
+        title: "",
+        description: "",
+        video: null,
+        remarks: "",
+      });
+
+      // Redirect after success
+      setTimeout(() => {
+        window.location.href = "/teacher-mycourses";
+      }, 1500);
+    } catch (err) {
+      console.error("Error adding chapter:", err);
+      setError("Failed to add chapter. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    const submitForm = async (event) => {
-        event.preventDefault();
-        setIsLoading(true);
-        setError('');
-        setSuccess('');
+  // -----------------------------------------------
 
-        const chapterFormData = new FormData();
-        
-        chapterFormData.append("course", course_id);
-        chapterFormData.append("title", chapterData.title);
-        chapterFormData.append("description", chapterData.description);
-        
-        // Only append video if a file was selected
-        if (chapterData.video) {
-            chapterFormData.append("video", chapterData.video, chapterData.video.name);
-        }
-        
-        chapterFormData.append("remarks", chapterData.remarks);
+  return (
+    <div className="container mt-4">
+      <div className="row">
+        {/* Sidebar */}
+        <aside className="col-md-3">
+          <Teachersidebar />
+        </aside>
 
-        try {
-            const response = await axios.post(baseUrl + "/chapter/", chapterFormData, {
-                headers: {
-                    'content-type': 'multipart/form-data'
-                }
-            });
-            
-            setSuccess('Chapter added successfully!');
-            // Optional: Reset form
-            setChapterData({
-                "title": '',
-                "description": '',
-                "video": "",
-                "remarks": ''
-            });
-            
-            // Redirect after success
-            setTimeout(() => {
-                window.location.href = "/teacher-mycourses";
-            }, 2000);
-            
-        } catch (error) {
-            console.log(error);
-            setError('Failed to add chapter. Please try again.');
-        } finally {
-            setIsLoading(false);
-        }
-    }
+        <section className="col-md-9">
+          <div className="card">
+            <h5 className="card-header">Add Chapter</h5>
 
-    return (
-        <div className="container mt-4">
-            <div className="row">
-                <aside className="col-md-3">
-                    <Teachersidebar />
-                </aside>
-                <section className="col-md-9">
-                    <div className="card">
-                        <h5 className="card-header">Add Chapter</h5>
-                        <div className="card-body">
-                            {/* Success and Error Messages */}
-                            {success && (
-                                <div className="alert alert-success">{success}</div>
-                            )}
-                            {error && (
-                                <div className="alert alert-danger">{error}</div>
-                            )}
-                            
-                            
-                            <form onSubmit={submitForm}>
-                                <div className="mb-3">
-                                    <label htmlFor="title" className="form-label">Title</label>
-                                    <input 
-                                        type="text" 
-                                        onChange={handleChange} 
-                                        name="title" 
-                                        className="form-control" 
-                                        id="title"
-                                        value={chapterData.title}
-                                        required
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="description" className="form-label">Description</label>
-                                    <textarea 
-                                        className="form-control" 
-                                        onChange={handleChange} 
-                                        name="description"
-                                        value={chapterData.description}
-                                        rows="4"
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="video" className="form-label">Video</label>
-                                    <input 
-                                        type="file" 
-                                        onChange={handleFileChange} 
-                                        name="video" 
-                                        id="video" 
-                                        className="form-control"
-                                        accept="video/*"
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="remarks" className="form-label">Remarks</label>
-                                    <textarea 
-                                        className="form-control" 
-                                        onChange={handleChange} 
-                                        name="remarks"
-                                        value={chapterData.remarks}
-                                        rows="3"
-                                    />
-                                </div>
-                                <button 
-                                    type="submit" 
-                                    className="btn btn-primary"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? 'Adding...' : 'Submit'}
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </section>
+            <div className="card-body">
+              {success && <div className="alert alert-success">{success}</div>}
+              {error && <div className="alert alert-danger">{error}</div>}
+
+              <form onSubmit={submitForm}>
+                {/* Title */}
+                <div className="mb-3">
+                  <label className="form-label">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    className="form-control"
+                    value={chapterData.title}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="mb-3">
+                  <label className="form-label">Description</label>
+                  <textarea
+                    name="description"
+                    className="form-control"
+                    value={chapterData.description}
+                    onChange={handleChange}
+                    rows="4"
+                  ></textarea>
+                </div>
+
+                {/* Video */}
+                <div className="mb-3">
+                  <label className="form-label">Upload Video</label>
+                  <input
+                    type="file"
+                    name="video"
+                    className="form-control"
+                    accept="video/*"
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                {/* Remarks */}
+                <div className="mb-3">
+                  <label className="form-label">Remarks</label>
+                  <textarea
+                    name="remarks"
+                    className="form-control"
+                    value={chapterData.remarks}
+                    onChange={handleChange}
+                    rows="3"
+                  ></textarea>
+                </div>
+
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Adding..." : "Submit"}
+                </button>
+              </form>
             </div>
-        </div>
-    );
+          </div>
+        </section>
+      </div>
+    </div>
+  );
 }
 
 export default AddChapter;

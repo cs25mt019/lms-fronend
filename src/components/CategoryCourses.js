@@ -1,70 +1,101 @@
 import { Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
 
-const baseURL = "http://localhost:8000/api/";
-const siteURL = "http://localhost:8000/";
+const API_URL = "http://127.0.0.1:8000/api/";
+const BACKEND_URL = "http://127.0.0.1:8000";
 
 function CategoryCourses() {
   const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { category_slug } = useParams();
 
   useEffect(() => {
+    setLoading(true);
+
     axios
-      .get(`${baseURL}course/?category=${category_slug}`)
-      .then((response) => setCourses(response.data))
-      .catch((error) => console.error("Error fetching category courses:", error));
+      .get(`${API_URL}course/?category=${category_slug}`)
+      .then((res) => {
+        setCourses(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching category courses:", err);
+        setLoading(false);
+      });
   }, [category_slug]);
+
+  if (loading) {
+    return (
+      <div className="container mt-5 text-center">
+        <h3>Loading courses...</h3>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h3 className="pb-1 mb-4 text-capitalize">{category_slug} Courses</h3>
+      <h3 className="pb-1 mb-4 text-capitalize">
+        {category_slug} Courses
+      </h3>
 
       <div className="row mb-4">
         {courses.length > 0 ? (
-          courses.map((course) => (
-            <div key={course.id} className="col-md-3 mb-3">
-              <div className="card h-100">
+          courses.map((course, index) => (
+            <motion.div
+              className="col-md-3 col-sm-6 mb-4"
+              key={course.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+            >
+              <motion.div
+                className="card h-100 shadow-sm"
+                whileHover={{ scale: 1.03 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
                 <img
-                    src={`${course.featured_image}`}
-                    className="card-img-top"
-                    alt={course.title}
-                  />
-                <div className="card-body d-flex flex-column">
-                  <h5 className="card-title">{course.title}</h5>
-                  <p className="card-text">{course.description}</p>
+                  src={
+                    course.featured_image
+                      ? BACKEND_URL + course.featured_image
+                      : "https://via.placeholder.com/300x200"
+                  }
+                  className="card-img-top"
+                  alt={course.title}
+                  style={{ height: "170px", objectFit: "cover" }}
+                />
 
-                  <Link to={`/detail/${course.id}`} className="btn btn-primary mt-auto">
+                <div className="card-body d-flex flex-column">
+                  <h5 className="card-title" style={{ minHeight: "50px" }}>
+                    {course.title.length > 40
+                      ? course.title.substring(0, 40) + "..."
+                      : course.title}
+                  </h5>
+
+                  <p className="card-text text-muted" style={{ fontSize: "14px" }}>
+                    {course.description.length > 70
+                      ? course.description.substring(0, 70) + "..."
+                      : course.description}
+                  </p>
+
+                  <Link
+                    to={`/detail/${course.id}`}
+                    className="btn btn-primary mt-auto"
+                  >
                     View Course
                   </Link>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           ))
         ) : (
           <p className="text-muted">No courses found in this category.</p>
         )}
       </div>
 
-      {/* Static pagination placeholder */}
-      <nav aria-label="Page navigation">
-        <ul className="pagination justify-content-center">
-          <li className="page-item disabled">
-            <button className="page-link" tabIndex="-1" disabled>
-              Previous
-            </button>
-          </li>
-          <li className="page-item active">
-            <button className="page-link">1</button>
-          </li>
-          <li className="page-item">
-            <button className="page-link">2</button>
-          </li>
-          <li className="page-item">
-            <button className="page-link">Next</button>
-          </li>
-        </ul>
-      </nav>
+      {/* Pagination placeholder */}
+     
     </div>
   );
 }
